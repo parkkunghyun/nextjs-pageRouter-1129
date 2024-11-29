@@ -5,13 +5,25 @@ import SearchableLayout from "@/components/searchable-layout";
 import style from "./index.module.css";
 import { ReactNode } from "react";
 
+import book from "@/mock/books.json"; // @기호는 ts의 프로젝트 src 폴더를 가리키는 경로
+import BookItem from "@/components/bok-item";
 
 export default function Home() {
   return (
-    <>
-      <h1 className={style.h1}>index</h1>
-      <h2 className={style.h2} >H2</h2>
-    </>
+    <div className={style.container}>
+      <section>
+        <h3 className={style.h3}>지금 추천하는 도서</h3>
+        {book.map((book) => (
+          <BookItem key={book.id} {...book} />
+        ))}
+      </section>
+      <section>
+        <h3 className={style.h3}>등록된 모든 도서</h3>
+        {book.map((book) => (
+          <BookItem key={book.id} {...book} />
+        ))}
+      </section>
+    </div>
   );
 }
 
