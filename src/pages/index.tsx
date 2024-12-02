@@ -7,13 +7,13 @@ import { ReactNode, useEffect } from "react";
 
 import book from "@/mock/books.json"; // @기호는 ts의 프로젝트 src 폴더를 가리키는 경로
 import BookItem from "@/components/bok-item";
-import { InferGetServerSidePropsType } from "next";
+import { InferGetServerSidePropsType, InferGetStaticPropsType } from "next";
 import fetchBooks from "@/lib/fetch-books";
 import fetchRandomBooks from "@/lib/fetch-random-books";
 
-export const getServerSideProps = async() => {
-  // 컴포넌트보다 먼저 실행이 되어서 해당 컴포넌트에 필요한 데이터를 불러오는 함수!
-  // server측에서 실행됨! -> 만약에
+// getStaticProps는 SSG방식으로 변형해줌
+export const getStaticProps = async () => {
+  console.log("인덱스 페이지");
 
   const [allBooks, recoBooks] = await Promise.all([
     fetchBooks(),
@@ -28,7 +28,7 @@ export const getServerSideProps = async() => {
   }
 };
 
-export default function Home({ allBooks, recoBooks }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Home({ allBooks, recoBooks }: InferGetStaticPropsType<typeof getStaticProps>) {
   // 이것도 서버에서 먼저 실행되고 그 다음에 브라우저에서 실행됨!!
   // hydration때 한번 더 실행됨
   // console.log(allBooks);

@@ -1,4 +1,4 @@
-import type { BookData } from "@/pages/types"
+import type { BookData } from "@/types"
 import Link from "next/link"
 import style from './book-item.module.css';
 

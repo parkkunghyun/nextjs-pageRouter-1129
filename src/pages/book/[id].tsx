@@ -1,13 +1,39 @@
 import { useRouter } from "next/router"
 import style from "./[id].module.css";
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { GetServerSidePropsContext, GetStaticPropsContext, InferGetServerSidePropsType, InferGetStaticPropsType } from "next";
 import fetchOneBook from "@/lib/fetch-one-book";
+import { notFound } from "next/navigation";
 
 
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+export const getStaticPaths = () => {
+
+    return {
+        paths: [
+            { params: { id: "1" } },
+            {params: {id: "2"}},
+            {params: {id: "3"}},
+        ],
+
+        //대체 즉 예외상황에 대비하는 보함
+        //fallback: false // not-found로 보내버림
+
+        //fallback: "blocking", // blocking은 ssr방식으로 생성 즉 이것도 정적페이지로 저장을 해버림
+        // 역시나 이것도 서버의 문제가 있다면 사전 렌더링이 오래걸림!!
+
+        fallback: true, // 일단 props없는 부분들만 먼저 보냄 ssg + 그리고 데이터 줌 ssr
+    }
+}
+
+export const getStaticProps = async (context: GetStaticPropsContext) => {
     const id = context.params!.id;
-    
+
     const oneBook = await fetchOneBook(Number(id));
+
+    if (!oneBook) {
+        return {
+            notFound: true,
+        }
+    }
 
     return {
         props: {
@@ -16,7 +42,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
     };
 }
 
-export default function Page({oneBook}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Page({oneBook}: InferGetStaticPropsType<typeof getStaticProps>) {
     // const mockData = {
     //     "id": 1,
     //     "title": "한 입 크기로 잘라 먹는 리액트",
@@ -28,7 +54,8 @@ export default function Page({oneBook}: InferGetServerSidePropsType<typeof getSe
     // };
 
     const router = useRouter();
-    if (!oneBook) return "book error";
+    if (router.isFallback) return "데이터를 로딩 중입니다...";
+    if (!oneBook) return "book이 없습니다";
     const { id, title, subTitle, description, author, publisher, coverImgUrl } = oneBook;
     return (
         <div className={style.container}>
