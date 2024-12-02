@@ -7,6 +7,7 @@ import BookItem from "@/components/bok-item";
 import { GetServerSidePropsContext, GetStaticPropsContext, InferGetServerSidePropsType } from "next";
 import fetchBooks from "@/lib/fetch-books";
 import { BookData } from "@/types";
+import Head from "next/head";
 
 // GetStaticPropsContext에서는 query로 받을 수 없음 즉 쿼리를 받을 수 없음
 // 대신 client에서 직접 진행해줄수는 있음
@@ -42,6 +43,12 @@ export default function Page() {
     }, [q]);
     return (
         <div>
+            <Head>
+                <title>한입북스</title>
+                <meta property="og:image" content="/thumbnail.png" />
+                <meta property="og:title" content="한입북스" />
+                <meta property="og:description" content="한입 북스에 등록된 도서를 만나보세요" />
+            </Head>
             {searchBooks.map((book) => (
                 <BookItem key={book.id} {...book} />
             ))}

@@ -5,15 +5,18 @@ import SearchableLayout from "@/components/searchable-layout";
 import style from "./index.module.css";
 import { ReactNode, useEffect } from "react";
 
-import book from "@/mock/books.json"; // @기호는 ts의 프로젝트 src 폴더를 가리키는 경로
+//import book from "@/mock/books.json"; // @기호는 ts의 프로젝트 src 폴더를 가리키는 경로
 import BookItem from "@/components/bok-item";
 import { InferGetServerSidePropsType, InferGetStaticPropsType } from "next";
 import fetchBooks from "@/lib/fetch-books";
 import fetchRandomBooks from "@/lib/fetch-random-books";
 
+
+import Head from "next/head";
+
 // getStaticProps는 SSG방식으로 변형해줌
 export const getStaticProps = async () => {
-  console.log("인덱스 페이지");
+  //console.log("인덱스 페이지");
 
   const [allBooks, recoBooks] = await Promise.all([
     fetchBooks(),
@@ -26,7 +29,6 @@ export const getStaticProps = async () => {
       recoBooks,
     },
     // revalidate: 3, // 재검증하다
-    
   }
 };
 
@@ -41,7 +43,14 @@ export default function Home({ allBooks, recoBooks }: InferGetStaticPropsType<ty
   // }, []);
 
   return (
-    <div className={style.container}>
+    <>
+      <Head>
+        <title>한입북스</title>
+        <meta property="og:image" content="/thumbnail.png" />
+        <meta property="og:title" content="한입북스" />
+        <meta property="og:description" content="한입 북스에 등록된 도서를 만나보세요" />
+      </Head>
+      <div className={style.container}>
       <section>
         <h3 className={style.h3}>지금 추천하는 도서</h3>
         {recoBooks.map((book) => (
@@ -55,6 +64,8 @@ export default function Home({ allBooks, recoBooks }: InferGetStaticPropsType<ty
         ))}
       </section>
     </div>
+    </>
+    
   );
 }
 
